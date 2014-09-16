@@ -5,10 +5,18 @@ void tda_set_indexes(tda_base_t **head)
 	tda_base_t *tmp = *head;
 	int i = 1;
 
-	while(tmp){
-		tmp->tda_index = i;
-		tmp = tmp->tda_next;
-		i++;
+	if((*head)->tda_type != TDA_CIRCULAR_LIST){
+		while(tmp){
+			tmp->tda_index = i;
+			tmp = tmp->tda_next;
+			i++;
+		}
+	} else {
+		do {
+			tmp->tda_index = i;
+			tmp = tmp->tda_next;
+			i++;
+		} while(tmp->tda_next != *head);
 	}
 }
 
@@ -52,15 +60,19 @@ int tda_base_add(tda_base_t **head, void *data)
 
 int tda_base_insf(tda_base_t **head, void *data)
 {
-	if( (*head)->tda_type != TDA_BASE || (*head)->tda_type != TDA_SIMPLE_LIST) return -1;
+	
+	if( *head && (*head)->tda_type == TDA_CIRCULAR_LIST) return -1; 
 	if(!(*head)){
+		
 		*head = tda_base_node(data);
 	} else {
+		
 		tda_base_t *tmp = *head;
 		tmp->tda_last = tda_base_node(data);
 		tmp->tda_last->tda_next = *head;
 		*head = tmp->tda_last;
 	}
+	
 	tda_set_indexes(head);
 	return (*head)->tda_index;
 }
@@ -112,7 +124,6 @@ void *tda_base_getdata(tda_base_t **head, int index)
 }
 
 static void tda_base_del(tda_base_t **head,tda_base_t **dnode){
-	printf("call tda_base_del ... \n");
 	tda_base_t *tmp = *dnode;
 	if(!(*head) || !(*dnode)) return;
 	else if(*head && !((*head)->tda_last) && !((*head)->tda_next))
@@ -128,8 +139,7 @@ static void tda_base_del(tda_base_t **head,tda_base_t **dnode){
 		(tmp)->tda_next->tda_last = (tmp->tda_last);
 		tmp=NULL;
 	}
-	if(*head){printf("Rebuilding indexes ... \n"); tda_set_indexes(head);}
-	printf("tda_base_del ret \n");
+	if(*head) tda_set_indexes(head);
 }
 
 void tda_base_delete(tda_base_t **head, int index)
