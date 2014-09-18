@@ -24,11 +24,11 @@ typedef struct double_linked_list
 /* Funciones de implementación del tda base */
 void tda_set_indexes(tda_base_t**);
 void tda_base_new  (tda_base_t**,void*);			/* Crea una nueva lista */
+void tda_base_nnew (tda_base_t**,int n); 			/* Crea una lista con 'n' cantidad de nodos iniciales */
 int  tda_base_insf (tda_base_t**,void*);			/* Agrega un nodo al principio de la lista */
 int  tda_base_ins  (tda_base_t**,int,void*);		/* Inserta un elemento despues del nodo con index = i */
 int  tda_base_add  (tda_base_t**,void*);			/* Agrega un elemento al final de la lista */
-int tda_base_add_copy (tda_base_t**, void*);		/* Reserva memoria para hacer una copia del dato */
-void tda_base_nnew (tda_base_t**,int n); 			/* Crea una lista con 'n' cantidad de nodos iniciales */
+int tda_base_add_copy (tda_base_t**, void*);		/* Reserva memoria para hacer una copia del dato y agrega la referencia */
 void tda_base_show (tda_base_t**);					/* Imprima a stdout información de cada nodo */
 void tda_base_setdata(tda_base_t**,void*,int i);	/* Guarda un dato en el nodo de indice i */
 void tda_base_delete(tda_base_t**,int);				/* Elimina un elemento de indice i */

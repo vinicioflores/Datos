@@ -4,5 +4,6 @@
 #include "binaryCalc.h"
 
 void testConversion(void);
+void testDeciToFloating(void);
 
 #endif
