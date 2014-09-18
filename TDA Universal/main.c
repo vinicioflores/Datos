@@ -28,6 +28,7 @@ int main(void)
 	int is  = tda_base_ins(&list,id,(void *)(s));
 	int ifl = tda_base_add(&list, (void *)(&f));
 
+	tda_set_type(&list,TDA_CIRCULAR_LIST);
 	system("color 2");
 	
 	puts("\n\tTDA Lista \n");
@@ -41,9 +42,10 @@ int main(void)
 	system("PAUSE");
 	system("cls");
 
-	char c0 = 'a';
+	char c0 = 'f';
 	char c1 = 'b';
 	int  d0 = 90;
+
 
 	puts("\n\tTDA Pila \n");
 	
@@ -53,13 +55,13 @@ int main(void)
 	tda_push(&pila0, (void *)(&c1));
 	tda_push(&pila0, (void *)(&d0));
 
-	tda_base_show(&list);
+	tda_base_show(&pila0);
 
-	printf("c0=%10c\n",     *((char *) tda_pop(&pila0) ));
+	printf("c0=%10d\n",     *((int *) tda_pop(&pila0) ));
 	printf("c1=%10c\n",     *((char *) tda_pop(&pila0) ));
-	printf("d0=%10d\n",     *((int *)  tda_pop(&pila0) ));
+	printf("d0=%10c\n",     *((char *)  tda_pop(&pila0) ));
 
-	tda_stack_destroy(&pila0);
+//	tda_stack_destroy(&pila0);
 	system("PAUSE");
 	system("cls");
 

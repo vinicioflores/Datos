@@ -9,6 +9,7 @@
 
 #define TDA_INIT_INDEX		0
 
+/* Tipos de TDA soportados por este TDA Universal */
 typedef enum { TDA_BASE, TDA_SIMPLE_LIST, TDA_CIRCULAR_LIST, TDA_STACK, TDA_TAIL, TDA_DOUBLE_TAIL } tda_type_t;
 /* La base de gran parte de los TDA más complejos es la lista doblemente enlazada */
 typedef struct double_linked_list
