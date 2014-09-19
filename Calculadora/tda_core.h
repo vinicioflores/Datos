@@ -1,4 +1,4 @@
-#ifndef __TDA_CORE_Hi
+#ifndef __TDA_CORE_H
 #define __TDA_CORE_H
 
 #include <stdio.h>
@@ -36,6 +36,7 @@ void tda_base_destroy(tda_base_t**);				/* Destruye una lista enlazada completam
 void *tda_base_getdata(tda_base_t**,int i);			/* Obtiene el puntero del dato guardado en el nodo de indice i */
 void tda_set_type(tda_base_t**,tda_type_t);			/* Convierte la lista estándar (doblemente enlazada) en el tipo especificado */
 int tda_get_end(tda_base_t **);						/* Retorna el indice del ultimo elemento de la lista */
+void tda_base_reverseElements(tda_base_t **head);  /* Reversa el orden de los punteros datos en la lista */
 
 
 tda_base_t *tda_base_search(tda_base_t**,int i);	/* Devuelve un puntero a nodo con indice igual a i(arg2) */

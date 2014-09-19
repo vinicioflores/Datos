@@ -232,8 +232,19 @@ void tda_base_show(tda_base_t **head)
 			starting = 0;
 		}
 	}
-
 	puts("");
+}
+
+void tda_base_reverseElements(tda_base_t **head){
+	tda_base_t *tempList = NULL;
+	int cantElements = tda_get_end(&*head);
+
+	for(int i = cantElements; i > 0; i--){
+		tda_base_add_copy(&tempList, tda_base_getdata(&*head, i));
+	}
+	
+	tda_base_destroy(&*head);
+	*head = tempList;
 }
 
 static void tda_convert_circular(tda_base_t **head)
