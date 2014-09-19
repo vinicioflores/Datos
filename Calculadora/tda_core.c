@@ -47,7 +47,7 @@ static tda_base_t *tda_base_node_copy(void *data)
 	//obetner memoria para hacer una copia del dato generico
 	node-> dataCopied = 1;
 	node-> tda_data = malloc(sizeof(data));
-	memcpy(node->tda_data, data, sizeof(data));	
+	memcpy(node->tda_data, data, sizeof(&data));	
 	node->tda_next = NULL;
 	node->tda_last = NULL;
 	node->tda_index = TDA_INIT_INDEX;

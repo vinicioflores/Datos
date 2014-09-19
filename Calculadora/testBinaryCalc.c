@@ -13,7 +13,7 @@ void testConversion(void){
 void testDeciToFloating(void){
 	tda_base_t *floatingNum;
 
-	floatingNum = convertBinaryDecimal("0.15625");
+	floatingNum = convertBinaryDecimal("2323.15625");
 
 	tda_base_destroy(&floatingNum);
 	

@@ -1,7 +1,7 @@
 TARGET = CalculadorBinario
 LIBS = -lm
-CC = gcc
-CFLAGS = -g -Wall
+CC = gcc 
+CFLAGS = -g -Wall -std=c11 
 
 .PHONY: default all clean
 
