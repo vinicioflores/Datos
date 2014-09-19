@@ -1,4 +1,4 @@
-#ifndef __TDA_CORE_H
+#ifndef __TDA_CORE_Hi
 #define __TDA_CORE_H
 
 #include <stdio.h>
@@ -24,7 +24,7 @@ typedef struct double_linked_list
 /* Funciones de implementación del tda base */
 void tda_set_indexes(tda_base_t**);
 void tda_base_new  (tda_base_t**,void*);			/* Crea una nueva lista */
-void tda_base_nnew (tda_base_t**,int n); 			/* Crea una lista con 'n' cantidad de nodos iniciales */
+void tda_base_nnewmake (tda_base_t**,int n); 			/* Crea una lista con 'n' cantidad de nodos iniciales */
 int  tda_base_insf (tda_base_t**,void*);			/* Agrega un nodo al principio de la lista */
 int  tda_base_ins  (tda_base_t**,int,void*);		/* Inserta un elemento despues del nodo con index = i */
 int  tda_base_add  (tda_base_t**,void*);			/* Agrega un elemento al final de la lista */
@@ -36,6 +36,7 @@ void tda_base_destroy(tda_base_t**);				/* Destruye una lista enlazada completam
 void *tda_base_getdata(tda_base_t**,int i);			/* Obtiene el puntero del dato guardado en el nodo de indice i */
 void tda_set_type(tda_base_t**,tda_type_t);			/* Convierte la lista estándar (doblemente enlazada) en el tipo especificado */
 int tda_get_end(tda_base_t **);						/* Retorna el indice del ultimo elemento de la lista */
+
 
 tda_base_t *tda_base_search(tda_base_t**,int i);	/* Devuelve un puntero a nodo con indice igual a i(arg2) */
 

@@ -256,4 +256,3 @@ void tda_set_type(tda_base_t **head, tda_type_t type)
 		(*head)->tda_type = type;
 	}
 }
-

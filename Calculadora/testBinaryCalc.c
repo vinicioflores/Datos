@@ -1,8 +1,8 @@
 #include "testBinaryCalc.h"
 
 void testConversion(void){
-	int result;
-	result = convertDecimalBinary(10) == 1010 && convertDecimalBinary(33) == 100001;
+	int result = 0;
+	//result = convertDecimalBinary(10) == 1010 && convertDecimalBinary(33) == 100001;
 	
 	if(result)
 		puts("OK!");
@@ -13,7 +13,7 @@ void testConversion(void){
 void testDeciToFloating(void){
 	tda_base_t *floatingNum;
 
-	floatingNum = convertBinaryDecimal("2323.15625");
+	floatingNum = convertBinaryDecimal("0.00015625");
 
 	tda_base_destroy(&floatingNum);
 	

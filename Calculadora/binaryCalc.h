@@ -9,13 +9,14 @@
 
 //estandard numeros flotantes IEEE "single precision" Binary32
 #define BITS 32
-#define EXPONENT 8
+#define EXPONENT 7
 #define MANTISA 23
 
 
 //retorna una lista que contiene un numero decimal en forma binario32
 tda_base_t *convertBinaryDecimal(char decimal[]);
-
-char *listFloatToStr(tda_base_t ** floating);
+//retona referencia a una lista que es una lista formado por los
+//elementos de una lista del tda con tipo short
+void listToStr(tda_base_t * shortList, char *str, int listSize);
 
 #endif
