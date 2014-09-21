@@ -10,7 +10,7 @@
 //estandard numeros flotantes IEEE "single precision" Binary32
 #define BITS 32
 #define EXPONENT 8
-#define MANTISA 23
+#define MANTISA 23 
 
 
 //retorna una lista que contiene un numero decimal en forma binario32

@@ -31,6 +31,10 @@ static tda_base_t *convertDecimalBinary(unsigned int decimal){
 	}else{
 		tda_base_add_copy(&binary, (void *) &decimal);
 	}
+
+	/*cambiar roden ya que algoritmo de multiplicar cambia de posicion los digitos
+	mas y menos significativos del digito */
+	tda_base_reverseElements(&binary);
 	
 	return binary;
 }
@@ -85,13 +89,14 @@ tda_base_t *convertBinaryDecimal(char decimal[]){
 
 	//encontrar digito antes del punto
 	index = lengthWholeBinary;
+	printf("lengthWholeBinary is: %d \n", index);
 	if(index == 1){//si parte entera solo tiene un digito
 		short keyDigit = *(short*) tda_base_getdata(&wholeBinaryNum, index);
 
 		if(keyDigit == 0){//si numero es menor a 1
 			for(int i = 1; i <= lengthBinaryFraction; i++){
 				//cantidad de veces correr punto decimal a la izquierda
-				if(*(short *) tda_base_getdata(&binaryFraction, i)){
+				if(!*(short *) tda_base_getdata(&binaryFraction, i)){
 					exponent = -(i);
 					break;
 				}
@@ -100,14 +105,11 @@ tda_base_t *convertBinaryDecimal(char decimal[]){
 			exponent = 0;
 		}
 	}else{ //si numero es mayor a 1
-		exponent = lengthWholeBinary;
+		exponent = lengthWholeBinary - 1;
 	}
 
 	//balancear exponente y agregarlo a la lista de num Flotante
 	balancedExponent = convertDecimalBinary(exponent + 127);
-	//printf("amount elements: %d\n", tda_get_end(&balancedExponent));
-	tda_base_reverseElements(&balancedExponent);
-	//printf("amount elements: %d\n", tda_get_end(&balancedExponent));
 	for(int i = 1; i<= EXPONENT; i++){
 		binaryDigit = *(short*) tda_base_getdata(&balancedExponent, i);
 		tda_base_add_copy(&floating, (void *) &binaryDigit);
@@ -115,27 +117,20 @@ tda_base_t *convertBinaryDecimal(char decimal[]){
 
 	printf("exponent balanced is %d\n", exponent);
 
-	//si la parte entera contiene mas de un digito, index es cantidad de digitos en wholeBinaryNum
-	if(balancedExponent - 127 >= 0){
+	/*si la parte entera contiene mas de un digito,
+	 exponent es cantidad de digitos en wholeBinaryNum */
+	if(exponent >= 1){
 		//copiar los digitos binario del entero a la lista floante quitar primer 1
-		for(int i = 2; i <= index; i++){
+		for(int i = 1; i <= index; i++){
 			binaryDigit = *(short*) tda_base_getdata(&wholeBinaryNum, i);
 			tda_base_add_copy(&floating, (void *) &binaryDigit);
 		}
 	}	
 
-	int start = 1;
-	if(exponent < 127)
-		start = 127 - exponent;
-	for(; start <= lengthBinaryFraction; start++){
+	for(int start = 1; start <= lengthBinaryFraction; start++){
 		binaryDigit = *(short*) tda_base_getdata(&binaryFraction, start);
 		tda_base_add_copy(&floating, (void *) &binaryDigit);
 	}
-
-
-	//printf("wholeBinaryNum is %d\n", wholeBinaryNum);
-	//printf("fraction is %f\n", fraction);
-	//printf("wholeBinaryNum in binary %d\n", convertDecimalBinary(atoi(wholeBinaryNum)) );
 
 	//liberar memoria
 	tda_base_destroy(&binaryFraction);
@@ -167,6 +162,6 @@ void printFloa(tda_base_t * floating){
 		printf("%c", floatingStr[i]);
 	puts("");
 
-	printf("Mantissa: %s\n", floatingStr + i + 1);
+	printf("Mantissa: %s\n", (floatingStr + i + 1));
 	free(floatingStr);
 }
