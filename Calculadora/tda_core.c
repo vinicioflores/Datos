@@ -201,17 +201,20 @@ int tda_get_end(tda_base_t **head)
 
 void tda_base_destroy(tda_base_t **head)
 {
-	tda_base_t *tmp = *head, *last=NULL;
-	int i = tda_get_end(head), cont=1;
-	tmp = tda_base_search(head,i);
+	if(*head != NULL){
+		tda_base_t *tmp = *head, *last=NULL;
+		int i = tda_get_end(head), cont=1;
+		tmp = tda_base_search(head,i);
 
-	while(cont){
-		cont = (!tmp && tmp->tda_type != TDA_CIRCULAR_LIST) || (tmp->tda_type == TDA_CIRCULAR_LIST && tmp != *head);
-		last = tmp->tda_last;
-		tda_base_del(head,&tmp);
-		tmp = last;
+		while(cont){
+			cont = (!tmp && tmp->tda_type != TDA_CIRCULAR_LIST) || (tmp->tda_type == TDA_CIRCULAR_LIST && tmp != *head);
+			last = tmp->tda_last;
+			tda_base_del(head,&tmp);
+			tmp = last;
+		}
+		*head = NULL;
 	}
-	*head = NULL;
+	
 }
 
 void tda_base_show(tda_base_t **head)

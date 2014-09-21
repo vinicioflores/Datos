@@ -14,7 +14,7 @@ typedef enum { TDA_BASE, TDA_SIMPLE_LIST, TDA_CIRCULAR_LIST, TDA_STACK, TDA_TAIL
 typedef struct double_linked_list
 {
 	tda_type_t tda_type;
-	int tda_index;
+	int tda_index;  
 	short dataCopied; //si malloc es usado para "copiar" informacion
 	void *tda_data;
 	struct double_linked_list *tda_next;
@@ -24,7 +24,7 @@ typedef struct double_linked_list
 /* Funciones de implementación del tda base */
 void tda_set_indexes(tda_base_t**);
 void tda_base_new  (tda_base_t**,void*);			/* Crea una nueva lista */
-void tda_base_nnewmake (tda_base_t**,int n); 			/* Crea una lista con 'n' cantidad de nodos iniciales */
+void tda_base_nnewmake (tda_base_t**,int n); 		/* Crea una lista con 'n' cantidad de nodos iniciales */
 int  tda_base_insf (tda_base_t**,void*);			/* Agrega un nodo al principio de la lista */
 int  tda_base_ins  (tda_base_t**,int,void*);		/* Inserta un elemento despues del nodo con index = i */
 int  tda_base_add  (tda_base_t**,void*);			/* Agrega un elemento al final de la lista */

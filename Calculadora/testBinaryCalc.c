@@ -13,8 +13,12 @@ void testConversion(void){
 void testDeciToFloating(void){
 	tda_base_t *floatingNum;
 
-	floatingNum = convertBinaryDecimal("2.5");
-	printFloa(floatingNum);
+	char sign = '-';
+	char whole[] = "2";
+	char fraction[] = "00343434";
+
+	floatingNum = convertBinaryDecimal(sign, whole, fraction);
+	//printFloa(floatingNum);
 	tda_base_destroy(&floatingNum);
 	
 	puts("OK!");
