@@ -14,7 +14,7 @@ void testDeciToFloating(void){
 	tda_base_t *floatingNum;
 
 	char sign = '-';
-	char whole[] = "2";
+	char whole[] = "33";
 	char fraction[] = "00343434";
 
 	floatingNum = convertBinaryDecimal(sign, whole, fraction);

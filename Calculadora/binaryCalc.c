@@ -35,12 +35,11 @@ static void divideList(tda_base_t ** listDigits, int divisor){
 		/* Si el numero a dividir es menor al divisor agregar
 			bajar el proximo digito de la lista */
 		if(digit< divisor){
-			for(int j = 1;digit < divisor || i<= lenList; j++)
+			for(int j = 1;digit < divisor && i< lenList; j++)
 				digit = digit * pow(base, j) + *(int*)tda_base_getdata(&*listDigits, i++);
 		}else{
 			digit = digit / divisor;
 		}
-
 		tda_base_add_copy(&tempList, &digit);
 	}
 
@@ -95,15 +94,19 @@ static void convertDecimalBinary(tda_base_t ** wholeNumList){
 	int lenList = tda_get_end(&*wholeNumList);
 
 	tda_base_t *binary = NULL;
-
 	//si decimal no es 0
-	if(lenList > 1 && !*(int*)tda_base_getdata(&*wholeNumList, 1)){
+	if(lenList > 1 || *(int*)tda_base_getdata(&*wholeNumList, 1)!= 0){
 		//hasta que sea 0
-		for(;lenList > 1 && !*(int*)tda_base_getdata(&*wholeNumList, 1);){
-			binaryDigit = *(int*)tda_base_getdata(&*wholeNumList, lenList) % 2;
+		int digit = *(int*)tda_base_getdata(&*wholeNumList, lenList);
+		while(digit != 0 || lenList > 1){
+			binaryDigit = *(int*)tda_base_getdata(&*wholeNumList, 1) % 2;
 			printf("Binary digit is: %d\n", binaryDigit);
 			tda_base_add_copy(&binary, (void *) &binaryDigit);
 			divideList(&*wholeNumList, 2);
+			lenList = tda_get_end(&*wholeNumList);
+			printf("List size is %d\n", lenList);
+			digit = *(int*)tda_base_getdata(&*wholeNumList, 1);
+			printf("Digit is %d\n", digit);
 		}
 	}else{
 		tda_base_add_copy(&binary, tda_base_getdata(&*wholeNumList, 1));
@@ -149,8 +152,8 @@ tda_base_t *convertBinaryDecimal(char sign, char wholeDeci[], char fraction[]){
 	strToListDigits(fraction, &binaryFraction);
 
 	/* Convert list of digits to binary */
-	convertDecimalBinary(&wholeBinaryNum);
-
+	//convertDecimalBinary(&wholeBinaryNum);
+	divideList(&wholeBinaryNum, 2);
 
 
 
@@ -159,6 +162,7 @@ tda_base_t *convertBinaryDecimal(char sign, char wholeDeci[], char fraction[]){
 	char tempString[10];
 	listToStr(wholeBinaryNum, tempString, tempListSize);
 	printf("Number is: %s\n", tempString);
+	printf("List size is: %d\n", tempListSize);
 
 	// multiplyList(&wholeBinaryNum, 2);
 	// tempListSize = tda_get_end(&wholeBinaryNum);
