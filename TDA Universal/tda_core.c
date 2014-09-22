@@ -1,9 +1,11 @@
 #include "tda_core.h"
 
+bool tda_base_isempty(tda_base_t **head){ return (bool)( tda_get_head(head) == NULL) ; }
+
 void tda_set_indexes(tda_base_t **head)
 {
 	tda_base_t *tmp = *head;
-	int i = 1;
+	int i = 0;
 
 	if((*head)->tda_type != TDA_CIRCULAR_LIST){
 		while(tmp){
@@ -12,21 +14,18 @@ void tda_set_indexes(tda_base_t **head)
 			i++;
 		}
 	} else {
-		do {
+		while(tmp->tda_next != tda_get_head(head)); {
 			tmp->tda_index = i;
 			tmp = tmp->tda_next;
 			i++;
-		} while(tmp->tda_next != *head);
+		} 
 	}
 }
 
 void tda_base_nnew(tda_base_t **head, int maxn)
 {
-	int i;
-
-	for(i=0;i<maxn;i++)
+	for(;maxn;maxn--)
 		tda_base_add(head,NULL);
-
 }
 
 tda_base_t *tda_base_node(void *data)
@@ -35,77 +34,99 @@ tda_base_t *tda_base_node(void *data)
 	node->tda_data = data;
 	node->tda_next = NULL;
 	node->tda_last = NULL;
-	node->tda_index = TDA_INIT_INDEX;
-	tda_set_indexes(&node);
+	node->tda_index = 0;
 	return node;
+}
+
+void tda_base_add_all(tda_base_t **head, tda_base_t **src)
+{
+	tda_base_p p2 = tda_get_head(src);
+
+	for(;p2;){
+		tda_base_add(head, p2->tda_data);
+		p2 = p2->tda_next;
+	}
 }
 
 int tda_base_add(tda_base_t **head, void *data)
 {
-	tda_base_t *tmp=NULL;
-	int index = 0;
-	if(!(*head)){
-		*head = tda_base_node(data);
-		index = 1;
-	} else {
-		tmp = *head;
-		while(tmp->tda_next) tmp = tmp->tda_next;
-		tmp->tda_next = tda_base_node(data);
-		tmp->tda_next->tda_last = tmp;
-		tda_set_indexes(head);
-		index = tmp->tda_next->tda_index;
-	}
-	return index;
+	return tda_base_ins(head,tda_get_end(head),data);
 }
 
 int tda_base_insf(tda_base_t **head, void *data)
 {
-	
-	if( *head && (*head)->tda_type == TDA_CIRCULAR_LIST) return -1; 
-	if(!(*head)){
-		
-		*head = tda_base_node(data);
-	} else {
-		
-		tda_base_t *tmp = *head;
-		tmp->tda_last = tda_base_node(data);
-		tmp->tda_last->tda_next = *head;
-		*head = tmp->tda_last;
-	}
-	
-	tda_set_indexes(head);
-	return (*head)->tda_index;
+	return tda_base_ins(head,0,data);
 }
 
-int tda_base_ins(tda_base_t **head, int idx,void *data)
+int tda_base_ins(tda_base_t **head,int index,void *data)
 {
-	int index=0;
-	if(*head && (*head)->tda_type == TDA_STACK) return -1;
-	if(!(*head)){
-		*head = tda_base_node(data); 
-	} else {
-		tda_base_t *last = tda_base_search(head,idx);
-		tda_base_t *tmp = tda_base_node(data);
-		tmp->tda_next = (last)->tda_next;
-		tmp ->tda_last = last;
-		(last)->tda_next = tmp;
-		tda_set_indexes(head);
-		index = tmp->tda_index;
+	/* Si vamos a insertar un elemento en una pila
+		debemos validar que sólo sea válido
+		colocarlo al tope de la pila,
+		si la posición es inválida devolvemos 
+		un codigo de error */
+	if(*head && (*head)->tda_type == TDA_STACK){
+		if(index != tda_get_end(head) && index != TDA_INIT_INDEX)
+			return TDA_ERR_INVALID_INSERTION;
 	}
-	return index;
+	bool found=false;
+	tda_base_t *new=tda_base_node(data),*after=*head;
+
+	if(!(*head)) return TDA_ERR_INVALID_INSERTION;
+	else if(!(*head)->tda_next && index == 0){
+		(*head)->tda_next=tda_base_node(data);
+		(*head)->tda_next->tda_type = (*head)->tda_type;
+		tda_set_indexes(head);
+		return 1;
+	} else {
+		new->tda_type = (*head)->tda_type;
+		while(after && !found){
+			if(after->tda_index != index) after=after->tda_next;
+			else found = true;
+		}
+
+		if(found){
+			if( (after && *head) && ( (*head)->tda_type == TDA_SIMPLE_LIST)  ){
+				new->tda_next = after->tda_next;
+				new->tda_index = (after->tda_index)+1;
+				after->tda_next = new; 
+			} else if ( (after && *head) && ( (*head)->tda_type == TDA_DOUBLE_LIST || (*head)->tda_type == TDA_DOUBLE_CIRCULAR_LIST )) {
+				new->tda_next = after->tda_next;
+				new->tda_last = after;
+				new->tda_index = (new->tda_last->tda_index)+1;
+				after->tda_next = new;
+			} else if( (after && *head) &&  ( (*head)->tda_type == TDA_CIRCULAR_LIST  )  ){
+
+				tda_base_t *hd=tda_get_head(head);
+				if(!tda_base_isempty (head) ){
+					new->tda_next = hd->tda_next;
+					hd->tda_next = new;
+				}
+
+				hd = new;
+			}
+			tda_set_indexes(head);
+			return new->tda_index;
+		}
+	}
+	return TDA_ERR_INVALID_INSERTION;
 }
 
 tda_base_t *tda_base_search(tda_base_t **head, int index)
 {
 	int starting = 1;
-	tda_base_t *tmp = *head;
-	if(tmp->tda_type != TDA_CIRCULAR_LIST){
-		while(tmp && tmp->tda_index != index)
-			tmp = tmp->tda_next;
-	} else {
-		while( ((tmp != *head && starting == 0) || (tmp == *head && starting != 0)) && tmp->tda_index != index){
-			tmp = tmp->tda_next;
-			starting = 0;
+	tda_base_t *tmp = (*head);
+	if(tmp){
+		if(tmp->tda_type != TDA_CIRCULAR_LIST){
+			while(tmp && tmp->tda_index  != index)
+				tmp = tmp->tda_next;
+		} else {
+			if(tda_get_head(head)){
+				while( ((tmp != tda_get_head(head) && starting == 0) || (tmp == tda_get_head(head) && starting != 0)) && tmp->tda_index != index){
+					tmp = tmp->tda_next;
+					starting = 0;
+				}
+			}
 		}
 	}
 	return tmp;
@@ -120,29 +141,42 @@ void tda_base_setdata(tda_base_t **head, void *data, int index)
 void *tda_base_getdata(tda_base_t **head, int index)
 {
 	tda_base_t *tmp = tda_base_search(head,index);
-	return tmp->tda_data;
+	if(tmp) return tmp->tda_data;
+	return NULL;
 }
 
 void tda_base_delete(tda_base_t **head, int index)
 {
-	tda_base_t *tmp = *head;
+	if(!(*head))return;
+	tda_type_t saved_type = 0;
+	tda_base_t *tmp = *head, *last=NULL;
 	int found = 0;
-
 	while(tmp && !found){
-		found = tmp->tda_index == index;
-		if(!found) tmp = tmp->tda_next;
+		found = (tmp->tda_index == index);
+		if(!found){
+			last = tmp;
+			tmp = tmp->tda_next;
+		}
 	}
-
-	if(tmp){
-		if(tmp == *head){
-			*head = tmp->tda_next;
-			if(tmp->tda_next) tmp->tda_next->tda_last = NULL;
-		} else if(tmp->tda_next){
-			tmp->tda_last->tda_next = tmp->tda_next;
-			tmp->tda_next->tda_last = tmp->tda_last;
-		} else tmp->tda_last->tda_next = NULL;
-		free(tmp);
-	}
+		/* Proceso para eliminar en el caso de que sea una lista enlazada simple */
+		if(*head && (*head)->tda_type == TDA_SIMPLE_LIST){
+			if(tmp==*head) *head = tmp->tda_next;
+			else { if(last && tmp) last->tda_next = tmp->tda_next; }
+		} else if((*head)->tda_type == TDA_DOUBLE_LIST){
+			if(tmp == *head){
+				saved_type = (*head)->tda_type;
+				*head = tmp->tda_next;
+				(*head)->tda_type = saved_type;
+				if(tmp->tda_next) tmp->tda_next->tda_last = NULL;
+			} else if(tmp && tmp->tda_next && tmp->tda_last){
+				tmp->tda_last->tda_next = tmp->tda_next; 
+				tmp->tda_next->tda_last = tmp->tda_last;
+			} else if(tmp->tda_last && tmp) tmp->tda_last->tda_next = NULL;
+		}
+		printf("Liberar %p ... \n", tmp);
+		if(tmp) free(tmp);
+		printf("Indexar desde cabeza %p\n",*head);
+		if(*head) tda_set_indexes(head);
 }
 
 int tda_get_end(tda_base_t **head)
@@ -150,43 +184,38 @@ int tda_get_end(tda_base_t **head)
 	tda_base_t *tmp = *head;
 	if(*head){
 		if(tmp->tda_type != TDA_CIRCULAR_LIST) while(tmp->tda_next) tmp=tmp->tda_next;
-		else while(tmp->tda_next != *head) tmp=tmp->tda_next;
-		return tmp->tda_index;
+		else  while(tmp && tmp->tda_next && tmp->tda_next != tda_get_head(head)) tmp=tmp->tda_next; 
+		if(tmp) return tmp->tda_index;
 	}
 	return 0;
 }
 
 void tda_base_destroy(tda_base_t **head)
 {
-	tda_base_t *tmp = *head, *last=NULL;
-	int i = tda_get_end(head), cont=1;
+	tda_base_t *tmp = *head;
+	int i = tda_get_end(head);
 	tmp = tda_base_search(head,i);
 
-	while(cont){
-		cont = (!tmp && tmp->tda_type != TDA_CIRCULAR_LIST) || (tmp->tda_type == TDA_CIRCULAR_LIST && tmp != *head);
-		last = tmp->tda_last;
-		tda_base_delete(head,tmp->tda_index);
-		tmp = last;
-	}
-	*head = NULL;
+	while(i>0) tda_base_delete(head,i--);
 }
 
 void tda_base_show(tda_base_t **head)
 {
 	int starting = 1;
 	if(!(*head)) return;
-	tda_base_t *tmp = *head;
+	tda_base_t *tmp = (*head)->tda_next;
 	if(tmp->tda_type != TDA_CIRCULAR_LIST){
 		while(tmp){
-			printf("[%2d] { #node#%10p\t#node->next#%10p\t#node->last#%10p }\n",tmp->tda_index,tmp,tmp->tda_next,tmp->tda_last);
+			printf("[%2d] (0x%x) {\n #node#%10p\t#node->next#%10p\t#node->last#%10p \n\t\t}\n",tmp->tda_index,(int)tmp->tda_data,tmp,tmp->tda_next,(tmp==(*head)->tda_next) ? NULL : tmp->tda_last);
 			tmp = tmp->tda_next;
+			printf("\n");
 		}
 	} else {
-		tmp = *head;
 		for(; (tmp != *head && starting == 0) || (tmp == *head && starting != 0);){
-			printf("[%2d] { #node#%10p\t#node->next#%10p\t#node->last#%10p }\n",tmp->tda_index,tmp,tmp->tda_next,tmp->tda_last);
+			printf("[%2d] (0x%x) { \n #node#%10p\t#node->next#%10p\t#node->last#%10p \n\t\t}\n",tmp->tda_index,(int)tmp->tda_data,tmp,tmp->tda_next,(tmp==(*head)->tda_next) ? NULL : tmp->tda_last);
 			tmp = tmp->tda_next;
 			starting = 0;
+			printf("\n");
 		}
 	}
 
@@ -204,21 +233,55 @@ static void tda_convert_circular(tda_base_t **head)
 	}
 }
 
+
+void tda_convert_simple(tda_base_t **head){
+	tda_base_t *p = *head;
+		p->tda_type = TDA_SIMPLE_LIST;
+		while(p){
+			p->tda_last = NULL;
+			p = p->tda_next;
+		}
+}
+
+void tda_convert_double(tda_base_t **head){
+	if(!(*head))
+		*head = tda_base_node(NULL);
+	(*head)->tda_type = TDA_DOUBLE_LIST;
+}
+
+void tda_print_type(tda_base_t **head)
+{
+	char st[35];
+	if((*head)->tda_type == TDA_SIMPLE_LIST) sprintf(st,"SimpleList\n");
+	else if((*head)->tda_type == TDA_DOUBLE_LIST) sprintf(st,"DoubleList\n");
+	else if((*head)->tda_type == TDA_CIRCULAR_LIST) sprintf(st,"CircleList\n");
+	else if((*head)->tda_type == TDA_DOUBLE_CIRCULAR_LIST) sprintf(st, "DoubleCircleList\n");
+	else if((*head)->tda_type == TDA_STACK) sprintf(st, "Stack\n");
+	printf("%s",st);
+}
+
+void tda_base_savedat(tda_base_t **head, void *data, int index, size_t size)
+{
+	tda_base_t *p = tda_base_search(head,index);
+	if(p){ p->tda_data = malloc(size);
+		   memcpy(p->tda_data,(const void*)data,size);
+		}
+}
+
 void tda_set_type(tda_base_t **head, tda_type_t type)
 {
-	if(!(*head)) return;
-	if(type == TDA_CIRCULAR_LIST)
-		tda_convert_circular(head);
-	else {
-		(*head)->tda_type = type;
-	}
+	if(!(*head)){ *head=tda_base_node(NULL); (*head)->tda_type = type; }
+	if(type == TDA_CIRCULAR_LIST) tda_convert_circular(head);
+	else if(type == TDA_SIMPLE_LIST) tda_convert_simple(head);
+	else if(type == TDA_DOUBLE_LIST) tda_convert_double(head);
+	else (*head)->tda_type = type;
 }
 
 
 int tda_base_len(tda_base_t **list)
 {
 	int count = 0;
-	tda_base_t *tmp = *list;
+	tda_base_t *tmp = (*list)->tda_next;
 
 	while(tmp){
 		tmp = tmp->tda_next;
@@ -226,3 +289,19 @@ int tda_base_len(tda_base_t **list)
 	}
 	return count;
 }
+
+
+tda_base_t *tda_get_head(tda_base_t **head) {
+	if(*head){
+		tda_base_p pt=*head;
+		if(pt->tda_type == TDA_CIRCULAR_LIST || pt->tda_type == TDA_DOUBLE_CIRCULAR_LIST) return (*head)->tda_next;
+		else {
+			return *head;
+		}
+	}
+
+
+	else return *head;
+	return NULL;
+}
+
