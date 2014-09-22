@@ -1,12 +1,18 @@
 #include "tda_core.h"
 
+<<<<<<< HEAD
 bool tda_base_isempty(tda_base_t **head){ return (bool)( tda_get_head(head) == NULL) ; }
+=======
+static tda_base_t *tda_base_node(void *pData);
+static tda_base_t *tda_base_node_copy(void *data);
+>>>>>>> origin/master
 
 void tda_set_indexes(tda_base_t **head)
 {
 	tda_base_t *tmp = *head;
 	int i = 0;
 
+<<<<<<< HEAD
 	if((*head)->tda_type != TDA_CIRCULAR_LIST){
 		while(tmp){
 			tmp->tda_index = i;
@@ -19,6 +25,12 @@ void tda_set_indexes(tda_base_t **head)
 			tmp = tmp->tda_next;
 			i++;
 		} 
+=======
+	while(tmp){
+		tmp->tda_index = i;
+		tmp = tmp->tda_next;
+		i++;
+>>>>>>> origin/master
 	}
 }
 
@@ -28,10 +40,30 @@ void tda_base_nnew(tda_base_t **head, int maxn)
 		tda_base_add(head,NULL);
 }
 
-tda_base_t *tda_base_node(void *data)
+/*retorna un nodo de la lista donde dato es guardado
+por referencia al data original */
+static tda_base_t *tda_base_node(void *data)
 {
 	tda_base_t *node = (tda_base_t *) malloc (sizeof(tda_base_t));
-	node->tda_data = data;
+	//obetner memoria para hacer una copia del dato generico
+	node-> dataCopied = 0;
+	node-> tda_data = data;
+	node->tda_next = NULL;
+	node->tda_last = NULL;
+	node->tda_index = TDA_INIT_INDEX;
+	tda_set_indexes(&node);
+	return node;
+}
+
+/*retorna un nodo de la lista donde el dato es copiado
+al heap y un puntero a tal es guardado en dato */
+static tda_base_t *tda_base_node_copy(void *data)
+{
+	tda_base_t *node = (tda_base_t *) malloc (sizeof(tda_base_t));
+	//obetner memoria para hacer una copia del dato generico
+	node-> dataCopied = 1;
+	node-> tda_data = malloc(sizeof(data));
+	memcpy(node->tda_data, data, sizeof(data));	
 	node->tda_next = NULL;
 	node->tda_last = NULL;
 	node->tda_index = 0;
@@ -53,9 +85,42 @@ int tda_base_add(tda_base_t **head, void *data)
 	return tda_base_ins(head,tda_get_end(head),data);
 }
 
+//agrega un elemento copiando ese elento a memoria
+int tda_base_add_copy (tda_base_t **head, void *data){
+	tda_base_t *tmp=NULL;
+	int index = 0;
+	if(!(*head)){
+		*head = tda_base_node_copy(data);
+		index = 1;
+	} else {
+		tmp = *head;
+		while(tmp->tda_next) tmp = tmp->tda_next;
+		tmp->tda_next = tda_base_node_copy(data);
+		tmp->tda_next->tda_last = tmp;
+		tda_set_indexes(head);
+		index = tmp->tda_next->tda_index;
+	}
+	return index;
+
+}
+
 int tda_base_insf(tda_base_t **head, void *data)
 {
+<<<<<<< HEAD
 	return tda_base_ins(head,0,data);
+=======
+	if( (*head)->tda_type != TDA_BASE || (*head)->tda_type != TDA_SIMPLE_LIST) return -1;
+	if(!(*head)){
+		*head = tda_base_node(data);
+	} else {
+		tda_base_t *tmp = *head;
+		tmp->tda_last = tda_base_node(data);
+		tmp->tda_last->tda_next = *head;
+		*head = tmp->tda_last;
+	}
+	tda_set_indexes(head);
+	return (*head)->tda_index;
+>>>>>>> origin/master
 }
 
 int tda_base_ins(tda_base_t **head,int index,void *data)
@@ -115,6 +180,7 @@ int tda_base_ins(tda_base_t **head,int index,void *data)
 tda_base_t *tda_base_search(tda_base_t **head, int index)
 {
 	int starting = 1;
+<<<<<<< HEAD
 	tda_base_t *tmp = (*head);
 	if(tmp){
 		if(tmp->tda_type != TDA_CIRCULAR_LIST){
@@ -127,6 +193,16 @@ tda_base_t *tda_base_search(tda_base_t **head, int index)
 					starting = 0;
 				}
 			}
+=======
+	tda_base_t *tmp = *head;
+	if(tmp->tda_type != TDA_CIRCULAR_LIST){
+		while(tmp->tda_index != index)
+			tmp = tmp->tda_next;
+	} else {
+		while( ((tmp != *head && starting == 0) || (tmp == *head && starting != 0)) && tmp->tda_index != index){
+			tmp = tmp->tda_next;
+			starting = 0;
+>>>>>>> origin/master
 		}
 	}
 	return tmp;
@@ -141,8 +217,41 @@ void tda_base_setdata(tda_base_t **head, void *data, int index)
 void *tda_base_getdata(tda_base_t **head, int index)
 {
 	tda_base_t *tmp = tda_base_search(head,index);
+<<<<<<< HEAD
 	if(tmp) return tmp->tda_data;
 	return NULL;
+=======
+	return tmp->tda_data;
+}
+
+static void tda_base_del(tda_base_t **head,tda_base_t **dnode){
+	//printf("call tda_base_del ... \n");
+	tda_base_t *tmp = *dnode;
+	if(!(*head) || !(*dnode)) return;
+	else if(*head && !((*head)->tda_last) && !((*head)->tda_next))
+		*head = NULL;
+	else if(!tmp->tda_last && tmp->tda_next){
+		(*head) = tmp->tda_next;
+		//si dato fue copiado
+		if(tmp->dataCopied)
+			free(tmp->tda_data);
+		free(tmp);
+
+	} else if(tmp->tda_last && !tmp->tda_next){
+		tmp->tda_last->tda_next = NULL;
+		//si dato fue copiado
+		if(tmp->dataCopied)
+			free(tmp->tda_data);
+		free(tmp);
+	} else {
+		(tmp)->tda_last->tda_next = (tmp)->tda_next;
+		(tmp)->tda_next->tda_last = (tmp->tda_last);
+		tmp=NULL;
+	}
+	if(*head){//printf("Rebuilding indexes ... \n");
+	 tda_set_indexes(head);}
+	//printf("tda_base_del ret \n");
+>>>>>>> origin/master
 }
 
 void tda_base_delete(tda_base_t **head, int index)
