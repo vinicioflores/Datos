@@ -123,29 +123,26 @@ void *tda_base_getdata(tda_base_t **head, int index)
 	return tmp->tda_data;
 }
 
-static void tda_base_del(tda_base_t **head,tda_base_t **dnode){
-	tda_base_t *tmp = *dnode;
-	if(!(*head) || !(*dnode)) return;
-	else if(*head && !((*head)->tda_last) && !((*head)->tda_next))
-		*head = NULL;
-	else if(!tmp->tda_last && tmp->tda_next){
-		(*head) = tmp->tda_next;
-		free(tmp);
-	} else if(tmp->tda_last && !tmp->tda_next){
-		tmp->tda_last->tda_next = NULL;
-		free(tmp);
-	} else {
-		(tmp)->tda_last->tda_next = (tmp)->tda_next;
-		(tmp)->tda_next->tda_last = (tmp->tda_last);
-		tmp=NULL;
-	}
-	if(*head) tda_set_indexes(head);
-}
-
 void tda_base_delete(tda_base_t **head, int index)
 {
-	tda_base_t *tmp = tda_base_search(head,index);
-	tda_base_del(head,&tmp);
+	tda_base_t *tmp = *head;
+	int found = 0;
+
+	while(tmp && !found){
+		found = tmp->tda_index == index;
+		if(!found) tmp = tmp->tda_next;
+	}
+
+	if(tmp){
+		if(tmp == *head){
+			*head = tmp->tda_next;
+			if(tmp->tda_next) tmp->tda_next->tda_last = NULL;
+		} else if(tmp->tda_next){
+			tmp->tda_last->tda_next = tmp->tda_next;
+			tmp->tda_next->tda_last = tmp->tda_last;
+		} else tmp->tda_last->tda_next = NULL;
+		free(tmp);
+	}
 }
 
 int tda_get_end(tda_base_t **head)
@@ -168,7 +165,7 @@ void tda_base_destroy(tda_base_t **head)
 	while(cont){
 		cont = (!tmp && tmp->tda_type != TDA_CIRCULAR_LIST) || (tmp->tda_type == TDA_CIRCULAR_LIST && tmp != *head);
 		last = tmp->tda_last;
-		tda_base_del(head,&tmp);
+		tda_base_delete(head,tmp->tda_index);
 		tmp = last;
 	}
 	*head = NULL;
@@ -217,3 +214,15 @@ void tda_set_type(tda_base_t **head, tda_type_t type)
 	}
 }
 
+
+int tda_base_len(tda_base_t **list)
+{
+	int count = 0;
+	tda_base_t *tmp = *list;
+
+	while(tmp){
+		tmp = tmp->tda_next;
+		count++;
+	}
+	return count;
+}

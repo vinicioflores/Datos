@@ -34,7 +34,9 @@ void tda_base_delete(tda_base_t**,int);									/* Elimina un elemento de indice
 void tda_base_destroy(tda_base_t**);									/* Destruye una lista enlazada completamente (libera todos los nodos de la memoria) */
 void *tda_base_getdata(tda_base_t**,int i);								/* Obtiene el puntero del dato guardado en el nodo de indice i */
 void tda_set_type(tda_base_t**,tda_type_t);								/* Convierte la lista estándar (doblemente enlazada) en el tipo especificado */
+void tda_base_del(tda_base_t**,tda_base_t**);							/* Saca un nodo de la lista */
 int tda_get_end(tda_base_t **);											/* Retorna el indice del ultimo elemento de la lista */
+int tda_base_len(tda_base_t **);										/* Obtiene el numero de nodos de una lista */
 
 tda_base_t *tda_base_node(void *pData);
 tda_base_t *tda_base_search(tda_base_t**,int i);						/* Devuelve un puntero a nodo con indice igual a i(arg2) */
