@@ -11,13 +11,14 @@ void testConversion(void){
 }
 
 void testDeciToFloating(void){
-	tda_base_t *floatingNum;
+	tda_base_t *floatingNum = NULL;
 
+	int precision = 32;
 	char sign = '-';
-	char whole[] = "33";
-	char fraction[] = "00343434";
+	char whole[] = "100";
+	char fraction[] = "50";
 
-	floatingNum = convertBinaryDecimal(sign, whole, fraction);
+	convertBinaryDecimal(&sign, whole, fraction, precision);
 	//printFloa(floatingNum);
 	tda_base_destroy(&floatingNum);
 	

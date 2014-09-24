@@ -14,7 +14,7 @@
 
 
 //retorna una lista que contiene un numero decimal en forma binario32
-tda_base_t *convertBinaryDecimal(char, char *, char *);
+void convertBinaryDecimal(char *, char *, char *, int precision);
 //retona referencia a una lista que es una lista formado por los
 //elementos de una lista del tda con tipo short
 void listToStr(tda_base_t * shortList, char *str, int listSize);
