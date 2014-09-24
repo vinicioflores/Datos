@@ -165,21 +165,29 @@ static void convertDecimalFractionBinary(tda_base_t ** floatingList, int mantisa
 	int lenList = tda_get_end(&*floatingList);
 	int newLenList;
 
-	for(int i = 0; i < mantisa; i++){
-		multiplyList(&*floatingList, 2);
+	if(lenList == 1 && tda_base_getdata(&*floatingList, 1) == 0){
+		for(int i = 0; i < mantisa; i++){
+			multiplyList(&*floatingList, 2);
 
-		newLenList = tda_get_end(&*floatingList);
+			newLenList = tda_get_end(&*floatingList);
 
-		if(newLenList > lenList){
-			tda_base_delete(&*floatingList, 1);
-			tda_base_add_copy(&binaryFraction, (void *) &bit1);
-		}else{
+			if(newLenList > lenList){
+				tda_base_delete(&*floatingList, 1);
+				tda_base_add_copy(&binaryFraction, (void *) &bit1);
+				newLenList--;
+			}else{
+				tda_base_add_copy(&binaryFraction, (void *) &bit0);
+			}
+		}//fin for
+	}else{
+		for(int i = 0; i < mantisa; i++){
 			tda_base_add_copy(&binaryFraction, (void *) &bit0);
 		}
-	}//fin for
+	}
 
 	tda_base_destroy(&*floatingList);
 	*floatingList = binaryFraction;
+	
 }
 
 void convertBinaryDecimal(char *sign, char wholeDeci[], char fraction[], int presicion){
@@ -229,8 +237,8 @@ void convertBinaryDecimal(char *sign, char wholeDeci[], char fraction[], int pre
 	balancedExponent = convertNaturalDecimalBinary(exponentShift
 	 + pow(2, exponentSlots -1) - 1);
 
-	/* si la parte entera contiene mas de un digito,
-	 exponent es cantidad de digitos en wholeBinaryNum */
+	 /*si la parte entera contiene mas de un digito,
+	 exponent es cantidad de digitos en wholeBinaryNum */ 
 	if(exponentShift >= 1){
 		//copiar los digitos binario del entero a la lista floante quitar primer 1
 		for(int i = 1; i <= index; i++){
@@ -259,76 +267,6 @@ void convertBinaryDecimal(char *sign, char wholeDeci[], char fraction[], int pre
 
 	free(mantisaStr);
 	free(exponentBalancedStr);
-
-
-
-
-	// short binaryDigit; //digito para guardar bit temporal
-	// int index = 0, lengthWholeBinary, lengthBinaryFraction;
-	// int wholeDeci; //parte entero
-	// float fractionDeci; //parte fracionaria
-	// unsigned int exponent = 0;
-
-	// short sign = 0; //sign
-	// if(decimal[index] == '-') //si es un numero negativo
-	// 		sign = 1;
-	// //agregar signo axponente a lista
-	// tda_base_add_copy(&floating, (void *) &sign);
-
-
-
-
-	// //encontrar digito antes del punto
-	// index = lengthWholeBinary;
-	// printf("lengthWholeBinary is: %d \n", index);
-	// if(index == 1){//si parte entera solo tiene un digito
-	// 	short keyDigit = *(short*) tda_base_getdata(&wholeBinaryNum, index);
-
-	// 	if(keyDigit == 0){//si numero es menor a 1
-	// 		for(int i = 1; i <= lengthBinaryFraction; i++){
-	// 			//cantidad de veces correr punto decimal a la izquierda
-	// 			if(!*(short *) tda_base_getdata(&binaryFraction, i)){
-	// 				exponent = -(i);
-	// 				break;
-	// 			}
-	// 		}
-	// 	}else{
-	// 		exponent = 0;
-	// 	}
-	// }else{ //si numero es mayor a 1
-	// 	exponent = lengthWholeBinary - 1;
-	// }
-
-	// //balancear exponente y agregarlo a la lista de num Flotante
-	// balancedExponent = convertDecimalBinary(exponent + 127);
-	// for(int i = 1; i<= EXPONENT; i++){
-	// 	binaryDigit = *(short*) tda_base_getdata(&balancedExponent, i);
-	// 	tda_base_add_copy(&floating, (void *) &binaryDigit);
-	// }
-
-	// printf("exponent balanced is %d\n", exponent);
-
-	// /*si la parte entera contiene mas de un digito,
-	//  exponent es cantidad de digitos en wholeBinaryNum */
-	// if(exponent >= 1){
-	// 	//copiar los digitos binario del entero a la lista floante quitar primer 1
-	// 	for(int i = 1; i <= index; i++){
-	// 		binaryDigit = *(short*) tda_base_getdata(&wholeBinaryNum, i);
-	// 		tda_base_add_copy(&floating, (void *) &binaryDigit);
-	// 	}
-	// }	
-
-	// for(int start = 1; start <= lengthBinaryFraction; start++){
-	// 	binaryDigit = *(short*) tda_base_getdata(&binaryFraction, start);
-	// 	tda_base_add_copy(&floating, (void *) &binaryDigit);
-	// }
-
-	// //liberar memoria
-	// tda_base_destroy(&binaryFraction);
-	// tda_base_destroy(&wholeBinaryNum);
-	// tda_base_destroy(&balancedExponent);
-
-	// return floating; //lista retornado debe ser destruido despues de ser usado
 } 
 
 //convierte los elementos de una lista con datos de tipo short a un str

@@ -16,7 +16,7 @@ void testDeciToFloating(void){
 	int precision = 32;
 	char sign = '-';
 	char whole[] = "100";
-	char fraction[] = "50";
+	char fraction[] = "0";
 
 	convertBinaryDecimal(&sign, whole, fraction, precision);
 	//printFloa(floatingNum);
