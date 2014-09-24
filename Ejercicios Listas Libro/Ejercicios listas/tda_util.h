@@ -14,7 +14,7 @@
 	#include "tda_core.h"
 #endif
 
-typedef enum {CHAR,INT,DOUBLE,FLOAT,IEEE,POINTER,STRING} tda_data_t;
+typedef enum {CHAR,INT,DOUBLE,FLOAT,SCI,IEEE,POINTER,STRING} tda_data_t;
 void tda_randgen(tda_base_t **,int,int);	/* Genera una lista enlazada doble de n elementos con numeros aleatorios dentro del rango dado */
 void tda_tshow(tda_base_t**,tda_data_t);
 
