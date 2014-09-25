@@ -27,10 +27,10 @@ int main(void)
 //	les_problema3(); clpause();
 //	led_problema3(); clpause();
 //	les_problema6(); clpause();
-	lec_problema7(); 
+//	lec_problema7(); 
 //	led_problema7();
 //	lec_problema8();
-//	les_problema9();
+	les_problema9();
 	return 0;
 }
 
