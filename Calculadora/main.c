@@ -4,8 +4,8 @@
 
 
 int main(void){
-	//testDeciToFloating();
-	textMenu();
+	testDeciToFloating();
+	//textMenu();
 
 	return 0;
 }

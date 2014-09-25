@@ -1,14 +1,12 @@
 #include "testBinaryCalc.h"
 
 void testDeciToFloating(void){
-	int precision = 32;
-	char sign = '-';
-	char whole[] = "0";
-	char fraction[] = "84";
+	char whole[] = "15";
+	char fraction[] = "4";
 
 	char *exponentFloat = NULL;
 	char *mantissaFloat = NULL;
-	convertBinaryDecimal(whole, fraction, precision, 
+	convertDecimalFloating(whole, fraction, 
 		&exponentFloat, &mantissaFloat);
 
 	//exponente
@@ -20,4 +18,11 @@ void testDeciToFloating(void){
 	free(mantissaFloat);
 	
 	puts("OK!");
+}
+
+vod testFloatToDeci(void){
+	char exponent = "01111111";
+	char mantisa = "001010"
+
+	convert
 }

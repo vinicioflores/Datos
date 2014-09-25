@@ -3,10 +3,7 @@
 /*retorna referencia a una lista que contiene en cada nodo un short
 lo cual es el resultado de la conversion de un una francion decimal a binario */
 static void convertDecimalBinary(tda_base_t ** wholeNumList);
-/*retorna referencia a una lista que contiene en cada nodo un short
-lo cual es el resultado de la conversion de un un entero decimal a binario */
-static void convertDecimalBinary(tda_base_t ** floatingList);
-//acepta un int normal y lo retorna en representacion binario en una lista
+///acepta un int normal y lo retorna en representacion binario en una lista
 static tda_base_t * convertNaturalDecimalBinary(unsigned int decimal);
 
 //numero digitos en un numero
@@ -105,33 +102,28 @@ static void multiplyList(tda_base_t ** listDigits, int multiplier){
 
 //cambia la lista con digitos enteros base 10 por uno base 2.
 static void convertDecimalBinary(tda_base_t ** wholeNumList){
-	short binaryDigit;
+	int binaryDigit;
 	int lenList = tda_get_end(&*wholeNumList);
 	int wholeDigit = *(int*)tda_base_getdata(&*wholeNumList, 1);
 
 	tda_base_t *binary = NULL;
-
-	if(wholeDigit != 0 && lenList == 1){
-		tda_base_add_copy(&binary, tda_base_getdata(&*wholeNumList, 1));
-	}else{
-		//hasta que sea 0 el numero decimal
-		while(lenList > 1 || *(int*)tda_base_getdata(&*wholeNumList, 1) != 0){
-			//obtener digito binario con modulo
-			wholeDigit = *(int*)tda_base_getdata(&*wholeNumList, lenList);
-			binaryDigit = wholeDigit % 2;
 	
-			tda_base_add_copy(&binary, (void *) &binaryDigit);
+	//hasta que sea 0 el numero decimal
+	while(lenList > 1 || *(int*)tda_base_getdata(&*wholeNumList, 1) != 0){
+		//obtener digito binario con modulo
+		wholeDigit = *(int*)tda_base_getdata(&*wholeNumList, lenList);
+		binaryDigit = wholeDigit % 2;
 
-			divideList(&*wholeNumList, 2);
-	
-			lenList = tda_get_end(&*wholeNumList);
+		tda_base_add_copy(&binary, (void *) &binaryDigit);
 
-			if(lenList == 0)
-				break;
-		}
+		divideList(&*wholeNumList, 2);
+
+		lenList = tda_get_end(&*wholeNumList);
+
+		if(lenList == 0)
+			break;
 	}
-
-	/*cambiar roden ya que algoritmo de multiplicar cambia de posicion los digitos
+		/*cambiar roden ya que algoritmo de multiplicar cambia de posicion los digitos
 	mas y menos significativos del digito */
 	tda_base_reverseElements(&binary);
 	tda_base_destroy(&*wholeNumList);
@@ -190,53 +182,66 @@ static void convertDecimalFractionBinary(tda_base_t ** floatingList, int mantisa
 }
 
 //valor lo retorna por referencia a "wholeDeci" y "fraction"
-void convertBinaryDecimal(char wholeDeci[], char fraction[], int presicion,
+void convertDecimalFloating(char wholeDeci[], char fraction[],
 	char **exponentFloat, char **mantissaFloat){
 	tda_base_t *wholeBinaryNum = NULL;
 	tda_base_t *binaryFraction = NULL;
 	tda_base_t *balancedExponent = NULL;
 	tda_base_t *mantissa = NULL;
 
-	int exponentSlots = (presicion / 32) + 7; //cantidad digito exponente
-	int mantisa = presicion - exponentSlots - 1;
+	int mantisa = PRECISION - EXPO_SLOTS - 1;
 	int listSize, exponentShift = 0;
 
-	printf("Exponente campo es %d y mantisa es %d\n", exponentSlots, mantisa);
 
 	//insertar los chars en listas y convertir a digitos
 	strToListDigits(wholeDeci, &wholeBinaryNum);
 	strToListDigits(fraction, &binaryFraction);
 
-	/* Convertir la lista de digitos a su represnetacion binario */
+	/* Convertir la lista de digitos (parte enterea) */
 	convertDecimalBinary(&wholeBinaryNum);
 	convertDecimalFractionBinary(&binaryFraction, mantisa);
 
+	//longitud num's binarios
 	int lengthWholeBinary = tda_get_end(&wholeBinaryNum);
 	int lengthBinaryFraction = tda_get_end(&binaryFraction);
 
+	printf("Exponente campo es %d y mantisa es %d\n", EXPO_SLOTS, mantisa);
+	
+
     //encontrar digito antes del punto
 	int index = lengthWholeBinary;
-	if(index == 1){//si parte entera solo tiene un digito
-		int keyDigit = *(int*) tda_base_getdata(&wholeBinaryNum, index);
+	if(index <= 1){
+		int keyDigit;
 
-		if(keyDigit == 0){//si numero es menor a 1
+		if(index != 0)
+			keyDigit = 1;
+		else
+			keyDigit = 0;
+
+		if(keyDigit == 0){//si digito es insinificativo
 			for(int i = 1; i <= lengthBinaryFraction; i++){
-				//cantidad de veces correr punto decimal a la izquierda
-				if(!*(int *) tda_base_getdata(&binaryFraction, i)){
-					exponentShift = -(i);
+				/*cantidad de veces correr punto decimal a la izquierda
+				para cuando es 0 */
+				if(*(int *) tda_base_getdata(&binaryFraction, i)){
+					exponentShift= -(i);
 					break;
 				}
 			}
 		}else{
 			exponentShift = 0;
 		}
-	}else{ //si numero es mayor a 1
+	}else{ 
 		exponentShift = lengthWholeBinary - 1;
 	}
-	printf("Exponent shif is: %d\n", exponentShift);
+
+	printf("Exponent shift is: %d\n", exponentShift);
 	
-	int decimalBalancedExponent = exponentShift + pow(2, exponentSlots - 1) - 1;
+	int decimalBalancedExponent = exponentShift + pow(2, EXPO_SLOTS - 1) - 1;
 	printf("Complement is : %d\n", decimalBalancedExponent);
+
+	//arreglo de indice si exponente es 0
+	if(exponentShift == 0)
+		exponentShift = 1;
 
 	//balancear exponente y agregarlo a la lista de num Flotante
 	balancedExponent = convertNaturalDecimalBinary(decimalBalancedExponent);
@@ -244,9 +249,9 @@ void convertBinaryDecimal(char wholeDeci[], char fraction[], int presicion,
 	//agregar 0's insignificativos al exponentBalanceado
 	int balancedExponentLength = tda_get_end(&balancedExponent);
 	int bit0 = 0;
-	if(balancedExponentLength < exponentSlots){
+	if(balancedExponentLength < EXPO_SLOTS){
 		tda_base_reverseElements(&balancedExponent);
-		while(balancedExponentLength < exponentSlots){
+		while(balancedExponentLength < EXPO_SLOTS){
 			tda_base_add_copy(&balancedExponent, (void *)&bit0);
 			balancedExponentLength = tda_get_end(&balancedExponent);
 		}
@@ -258,15 +263,15 @@ void convertBinaryDecimal(char wholeDeci[], char fraction[], int presicion,
 	int start;
 	if(exponentShift >= 1){
 		//copiar los digitos binario del entero a la lista floante quitar primer 1
-		for(int i = 1; i <= index; i++){
+		for(int i = 2; i <= index; i++){
 			int binaryDigit = *(int*) tda_base_getdata(&wholeBinaryNum, i);
 			tda_base_add_copy(&mantissa, (void *) &binaryDigit);
 		}
 		start = 1;
-	}else{ // si numbero entero es 0
-		start = 2;
+	}else{ //si entero es 0
+		start = -exponentShift - 1;
 	}
-	
+	printf("Index is %d\n", index);
 	//agregar parte fracionaria
 	for(; start <= lengthBinaryFraction - index; start++){
 		int binaryDigit = *(int*) tda_base_getdata(&binaryFraction, start);
@@ -278,7 +283,6 @@ void convertBinaryDecimal(char wholeDeci[], char fraction[], int presicion,
 	tda_base_destroy(&binaryFraction);
 
 	//Retorna el exponent binario balanceado y la mantissa flotante
-
 	listSize = tda_get_end(&balancedExponent);
 	*exponentFloat = malloc(sizeof(char)* listSize * tda_get_end(&mantissa));
     listToStr(balancedExponent, *exponentFloat, listSize);
