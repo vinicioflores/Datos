@@ -3,7 +3,7 @@
 
 #include "binaryCalc.h"
 
-void testConversion(void);
+void testFloatToDeci(void);
 void testDeciToFloating(void);
 
 #endif

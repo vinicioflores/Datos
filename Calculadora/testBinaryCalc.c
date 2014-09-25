@@ -20,9 +20,11 @@ void testDeciToFloating(void){
 	puts("OK!");
 }
 
-vod testFloatToDeci(void){
-	char exponent = "01111111";
-	char mantisa = "001010"
+void testFloatToDeci(void){
+	char exponent[] = "01111111";
+	char mantisa[] = "001010";
 
-	convert
+	//convertFloatToDeci();
+
+	puts("OK");
 }
