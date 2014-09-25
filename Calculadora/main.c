@@ -7,5 +7,9 @@ int main(void){
 	testDeciToFloating();
 	//textMenu();
 
+	#ifdef _WIN32
+	system("pause");
+	#endif
+
 	return 0;
 }
