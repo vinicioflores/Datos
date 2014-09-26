@@ -6,15 +6,6 @@ static void convertDecimalBinary(tda_base_t ** wholeNumList);
 ///acepta un int normal y lo retorna en representacion binario en una lista
 static tda_base_t * convertNaturalDecimalBinary(unsigned int decimal);
 
-//numero digitos en un numero
-int nlen(unsigned int digit){
-	for(int i = 1;;i++){
-		if(digit < pow(10, i)){
-			return i;
-		}
-	}
-}
-
 static void strToListDigits(char charInts[], tda_base_t ** listInts){
 	for(int i = 0; i < strlen(charInts); i++){
 		int tempDigit = charInts[i] - '0';
@@ -53,10 +44,6 @@ static void divideList(tda_base_t ** listDigits, int divisor){
 
 	tda_base_destroy(&*listDigits);
 	*listDigits = tempList;
-
-	// char result[20];
-	// listToStr(tempList, result, tda_get_end(&tempList));
-	// printf("Divided number is now: %s\n", result);
 }
 
 /* Multiplica una lista de digitos (ints) en base 10 */
@@ -130,6 +117,19 @@ static void convertDecimalBinary(tda_base_t ** wholeNumList){
 	*wholeNumList = binary;
 }
 
+static int convertBinaryToDecimal(tda_base_t **decimalNum){
+	int strLenth = tda_get_end(&*decimalNum);
+	unsigned int wholeNum = 0;
+
+	int digit;
+	for(int i = 1; i<= strLenth; i++){
+		digit = *(int*) tda_base_getdata(&*decimalNum, strLenth - i + 1);
+		wholeNum += digit * pow(2, i-1);
+	}
+
+	return wholeNum;
+}
+
 static tda_base_t * convertNaturalDecimalBinary(unsigned int decimal){
 		unsigned short binaryDigit;
 		tda_base_t *binary = NULL;
@@ -181,9 +181,9 @@ static void convertDecimalFractionBinary(tda_base_t ** floatingList, int mantisa
 	*floatingList = binaryFraction;	
 }
 
-//valor lo retorna por referencia a "wholeDeci" y "fraction"
+//valor lo retorna por referencia a "exponentFloat" y "mantissaFloat"
 void convertDecimalFloating(char wholeDeci[], char fraction[],
-	char **exponentFloat, char **mantissaFloat){
+ char **exponentFloat, char **mantissaFloat){
 	tda_base_t *wholeBinaryNum = NULL;
 	tda_base_t *binaryFraction = NULL;
 	tda_base_t *balancedExponent = NULL;
@@ -291,6 +291,27 @@ void convertDecimalFloating(char wholeDeci[], char fraction[],
 	*mantissaFloat = malloc(sizeof(char)* listSize);
     listToStr(mantissa, *mantissaFloat, listSize);
 } 
+
+//valor en decimal lo retorna por referencia es "wholenumber" y "fraction"
+float convertFloatToDeci(char exponent[], char mantissa[]){
+	tda_base_t *decimalNum = NULL;
+	tda_base_t *exponentNum = NULL;
+
+	strToListDigits(mantissa, &decimalNum);
+	strToListDigits(exponent, &exponentNum);
+
+	int mantissaDecimal = convertBinaryToDecimal(&decimalNum);
+	int unbalancedExponent = convertBinaryToDecimal(&exponentNum);
+
+	float result = 0.0f;
+	int shift = unbalancedExponent - pow(2, EXPO_SLOTS - 1) + 1;
+	result = (mantissaDecimal / pow(2, strlen(mantissa)) + 1) * pow(2,shift);
+    
+	//printf("mantissa is: %d and exponent is: %d\n", mantissaDecimal, unbalancedExponent);
+	//printf("result is %f\n", result);
+	return result;
+
+}
 
 //convierte los elementos de una lista con datos de tipo short a un str
 void listToStr(tda_base_t * shortList, char *str, int listSize){

@@ -22,9 +22,11 @@ void testDeciToFloating(void){
 
 void testFloatToDeci(void){
 	char exponent[] = "01111111";
-	char mantisa[] = "001010";
+	char mantissa[] = "001010";
 
-	//convertFloatToDeci();
+	float result = convertFloatToDeci(exponent, mantissa);
+
+	printf("floating is now: %f\n", result);
 
 	puts("OK");
 }

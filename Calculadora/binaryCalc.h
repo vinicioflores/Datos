@@ -18,5 +18,7 @@ void convertDecimalFloating(char *, char *, char**, char**);
 //retona referencia a una lista que es una lista formado por los
 //elementos de una lista del tda con tipo short
 void listToStr(tda_base_t * shortList, char *str, int listSize);
+//valor en decimal lo retorna por referencia es "wholenumber" y "fraction"
+float convertFloatToDeci(char exponent[], char mantissa[]);
 
 #endif

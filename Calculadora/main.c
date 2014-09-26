@@ -4,8 +4,9 @@
 
 
 int main(void){
-	testDeciToFloating();
-	//textMenu();
+	//testDeciToFloating();
+	//testFloatToDeci();
+	textMenu();
 
 	#ifdef _WIN32
 	system("pause");
