@@ -118,3 +118,4 @@ void ledc_problema7()
 	printf("\nCardinalidad del conjunto: %d\n", cardinal(&conjunto) );
 	verificarPertenencia(&conjunto);
 }
+

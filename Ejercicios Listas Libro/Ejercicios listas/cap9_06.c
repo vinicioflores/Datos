@@ -119,3 +119,4 @@ void ledc_problema6()
 	ordenar_burbuja(&charlist);
 	tda_tshow(&charlist,CHAR);
 }
+
