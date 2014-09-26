@@ -48,7 +48,7 @@ char* tda_sget(tda_base_t **head, int index)
 
 void tda_tshow(tda_base_t **head, tda_data_t type)
 {
-	bool cicle_cond = true, starting = false;
+	bool cicle_cond = true;
 	tda_base_t *p = tda_get_head(head);
 	tda_base_p pHead = *head;
 	printf("-> Head: %p, next: %p [", *head, pHead->tda_next);

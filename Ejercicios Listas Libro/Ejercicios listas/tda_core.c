@@ -200,7 +200,7 @@ void tda_base_show(tda_base_t **head)
 	int starting = 1;
 	if(!(*head)) return;
 	tda_base_t *tmp = (*head)->tda_next;
-	if(tmp->tda_type != TDA_CIRCULAR_LIST){
+	if(tmp && tmp->tda_type != TDA_CIRCULAR_LIST){
 		while(tmp){
 			printf("[%2d] (0x%x) {\n #node#%10p\t#node->next#%10p\t#node->last#%10p \n\t\t}\n",tmp->tda_index,(int)tmp->tda_data,tmp,tmp->tda_next,(tmp==(*head)->tda_next) ? NULL : tmp->tda_last);
 			tmp = tmp->tda_next;
@@ -265,7 +265,7 @@ void tda_convert_double(tda_base_t **head){
 
 	tda_base_p ptmp = *head, last=NULL;
 	if(ptmp){
-		ptmp->tda_last = *head;
+		ptmp->tda_last = last;
 		last = ptmp;
 		ptmp = ptmp->tda_next;
 		for(;ptmp;){
@@ -316,6 +316,21 @@ int tda_base_len(tda_base_t **list)
 		count++;
 	} 
 	return count;
+}
+
+void tda_base_fill(tda_base_t **list, void *d)
+{
+	bool cond=true;
+	tda_base_p np = *list;
+
+	while(cond && np){
+		if( (*list)->tda_type == TDA_CIRCULAR_LIST || (*list)->tda_type == TDA_DOUBLE_CIRCULAR_LIST ){
+			cond = (np != tda_get_head(list) );
+		}
+		if(np->tda_data) free(np->tda_data);
+		tda_base_savedat(list,d,np->tda_index,sizeof(d));
+		np = np->tda_next;
+	}
 }
 
 

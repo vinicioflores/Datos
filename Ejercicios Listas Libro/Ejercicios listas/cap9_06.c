@@ -3,7 +3,7 @@
 static void ordenar_burbuja(tda_base_t **head)
 {
 	tda_base_t *ptmp = tda_get_head(head);
-	int inter = 1,j=0, swapIndex=0,i;
+	int j=0, swapIndex=0,i;
 
 	i = tda_base_len(head);
 	

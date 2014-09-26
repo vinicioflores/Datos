@@ -21,7 +21,7 @@
 
 int main(void)
 {
-//	les_problema1(); 
+	//les_problema1(); 
 //  led_problema1();	
 //	les_problema2(); clpause();
 //	les_problema3(); clpause();
@@ -30,7 +30,9 @@ int main(void)
 //	lec_problema7(); 
 //	led_problema7();
 //	lec_problema8();
-	les_problema9();
+//	les_problema9();
+//	les_problema10(); pause();
+	led_problema11(); pause();
 	return 0;
 }
 

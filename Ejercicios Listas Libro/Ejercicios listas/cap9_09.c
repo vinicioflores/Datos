@@ -3,6 +3,20 @@
 #define STRING_MAX			512
 #define SUBCONJ_START    -1
 
+void readword(char *wordbuf, FILE *pf, bool *nextread)
+{
+	char c='.';
+	int j;
+
+	for(j=0; c!=' ' && c != '\n' && c != '\t' && c!= EOF && c != '\r' && c != ','  && c != '.'; j++){
+		c = fgetc(pf);
+		wordbuf[j] = c;
+		putchar(wordbuf[j]);
+	}
+
+	if(c==EOF || feof(pf)) *nextread = false;
+}
+
 void s_agregarElemento(tda_base_t **conj, String s, int maxlen)
 {
 	tda_base_savedat(conj,s,tda_base_add(conj,NULL),maxlen);
@@ -10,20 +24,36 @@ void s_agregarElemento(tda_base_t **conj, String s, int maxlen)
 
 void s_agregarElementos(tda_base_t **conj, tda_base_t **c2)
 {
-	int i,maxlen,j;
-	char d[STRING_MAX];
+	int i,j;
+	char d[STRING_MAX],fname1[STRING_MAX],fname2[STRING_MAX];
 	memset(d,0,STRING_MAX);
+
+	bool nextread = true;
+	FILE *f1, *f2;
+
+	printf("Inserte nombre del archivo 1: "); scanf("%s", fname1);
+	printf("Inserte nombre del archivo 2: "); scanf("%s", fname2);
+
+	f1 = fopen(fname1, "r");
+	f2 = fopen(fname2, "r");
+
+	if(!f1 || !f2) {
+		perror("Fallo al abrir uno/ambos archivos. ");
+		exit(0);
+	}
 	
 	for(i=1,j=0;j<2;j++,i=1){
 		printf("Creacion de conjunto %d\n\n", j+1);
-		printf(" :Inserte numero maximo de elementos para conjunto %d: ", j+1); scanf("%d", &maxlen);
-		while(i <= maxlen){
+		
+		do {
 			fflush(stdin); fflush(stdout);
-			printf("Inserte elemento %d: ", i); scanf("%s", d);
+			if(j == 0) readword(d, f1, &nextread);
+			else readword(d, f2, &nextread);
 			if(!j) s_agregarElemento(conj,d,STRING_MAX);
 			else s_agregarElemento(c2,d,STRING_MAX);
+			memset(d,0,STRING_MAX);
 			i++;
-		}
+		} while(nextread);
 	} 
 }
 
